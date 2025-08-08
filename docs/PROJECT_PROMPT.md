@@ -1,4 +1,4 @@
-# Project Prompt: AI‑Powered Recipe PWA (Next.js + TypeScript, App Router, Vercel)
+# AI‑Powered Recipe PWA (Next.js + TypeScript, App Router, Vercel)
 
 ## 1) Goal & Elevator Pitch
 
