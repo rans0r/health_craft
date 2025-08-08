@@ -23,5 +23,9 @@ This repository hosts a minimal Next.js 15 app configured with the App Router, T
 - `npm run build` – create a production build
 - `npm run start` – run the production build
 - `npm run lint` – run ESLint
+- `npm test` – run unit and contract tests
+- `npm run test:e2e` – run Playwright end-to-end tests
+- `npm run test:lhci` – run a Lighthouse audit
 
 For the complete project specification and roadmap, see [docs/PROJECT_PROMPT.md](docs/PROJECT_PROMPT.md).
+For details on the testing approach, see [docs/testing-strategy.md](docs/testing-strategy.md).
