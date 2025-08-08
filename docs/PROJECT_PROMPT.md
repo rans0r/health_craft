@@ -41,7 +41,7 @@ Build a fast, offlineâ€‘capable Progressive Web App that becomes a personal, AIâ
 
 ## 4) Tech Stack & Hosting
 
-* **Framework**: Next.js 14+ (App Router) + TypeScript.
+* **Framework**: Next.js 15+ (App Router) + TypeScript.
 * **UI**: Tailwind CSS + shadcn/ui + Radix primitives.
 * **State**: React Server Components (RSC) + server actions; client state via Zustand or React Query for optimistic updates.
 * **DB**: Postgres (Vercel Postgres or Neon) + Prisma.
