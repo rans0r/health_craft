@@ -1,41 +1,79 @@
 import { prisma } from '@/lib/prisma';
 import { createEmbedding } from '@/lib/embedding';
+import { computeSearchScore } from '@/lib/search';
 
-// Simple full-text and semantic search endpoint for recipes.
+// Search recipes with ranking across recency, rating, filter fit, and semantic similarity.
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const q = searchParams.get('q') || '';
   const tags = searchParams.getAll('tag');
-  const semantic = searchParams.get('semantic');
+  const useSemantic = searchParams.get('semantic') === 'true';
 
-  const where: any = {};
-  if (q && !semantic) {
-    where.OR = [
-      { title: { contains: q, mode: 'insensitive' } },
-      { description: { contains: q, mode: 'insensitive' } },
-    ];
-  }
-  if (tags.length) {
-    where.tags = { hasEvery: tags };
-  }
-
-  if (semantic && q) {
-    const embedding = await createEmbedding(q);
+  let embedding: Buffer | null = null;
+  if (useSemantic && q) {
+    embedding = await createEmbedding(q);
     if (!embedding) {
       return Response.json({ recipes: [] });
     }
-    const recipes = await prisma.$queryRawUnsafe(
-      `SELECT id, title, description, tags FROM "Recipe" ORDER BY embedding <-> $1 LIMIT 20`,
-      embedding,
-    );
-    return Response.json({ recipes });
   }
 
-  const recipes = await prisma.recipe.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-    take: 20,
-    select: { id: true, title: true, description: true, tags: true },
-  });
+  const params: any[] = [];
+  let idx = 1;
+
+  let semanticSelect = '0 as semantic_similarity';
+  if (embedding) {
+    semanticSelect = `1 / (1 + (r.embedding <-> $${idx})) as semantic_similarity`;
+    params.push(embedding);
+    idx++;
+  }
+
+  params.push(tags);
+  const filterSelect = `(SELECT COUNT(*) FROM UNNEST($${idx}::text[]) t WHERE t = ANY(r.tags))::float AS filter_matches, array_length($${idx}::text[],1) as filter_count`;
+  idx++;
+
+  let where = '';
+  if (q && !embedding) {
+    where = `WHERE (r.title ILIKE '%' || $${idx} || '%' OR r.description ILIKE '%' || $${idx} || '%')`;
+    params.push(q);
+    idx++;
+  }
+
+  const query = `
+    SELECT r.id, r.title, r.description, r.tags, r.createdAt,
+           COALESCE(avg_r.avg_rating, 0) as avg_rating,
+           ${semanticSelect},
+           ${filterSelect}
+    FROM "Recipe" r
+    LEFT JOIN (
+      SELECT "recipeId", AVG(rating) as avg_rating
+      FROM "RecipeRating"
+      GROUP BY "recipeId"
+    ) avg_r ON avg_r."recipeId" = r.id
+    ${where}
+  `;
+
+  const rows = (await prisma.$queryRawUnsafe(query, ...params)) as any[];
+
+  const recipes = rows
+    .map((r) => {
+      const recencyDays = (Date.now() - new Date(r.createdAt).getTime()) / (1000 * 60 * 60 * 24);
+      const filterRatio = r.filter_count ? r.filter_matches / r.filter_count : 1;
+      const score = computeSearchScore({
+        semanticSimilarity: r.semantic_similarity || 0,
+        recencyDays,
+        rating: r.avg_rating || 0,
+        filterMatchRatio: filterRatio,
+      });
+      return {
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        tags: r.tags,
+        score,
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 20);
+
   return Response.json({ recipes });
 }
