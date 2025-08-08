@@ -1,5 +1,6 @@
 import { openai } from '@/lib/openai';
 import { estimateNutrition } from '@/lib/nutrition';
+import { autoTagRecipe } from '@/lib/tags';
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
   }
 
   recipe.nutrition = await estimateNutrition(recipe.ingredients || []);
+  recipe.tags = autoTagRecipe(recipe);
 
   return Response.json({ recipe });
 }

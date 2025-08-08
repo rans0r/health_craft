@@ -20,6 +20,8 @@ model User {
   createdAt  DateTime           @default(now())
   recipes    Recipe[]
   shoppingLists ShoppingList[]
+  favorites  RecipeFavorite[]
+  ratings    RecipeRating[]
 }
 
 model Household {
@@ -62,6 +64,9 @@ model Recipe {
   embedding    Bytes?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  favorites    RecipeFavorite[]
+  ratings      RecipeRating[]
+  versions     RecipeVersion[]
 }
 
 model MealPlan {
@@ -82,5 +87,40 @@ model ShoppingList {
   createdAt DateTime @default(now())
   plan      MealPlan? @relation(fields: [planId], references: [id])
   owner     User      @relation(fields: [ownerId], references: [id])
+}
+
+model RecipeFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@unique([userId, recipeId])
+}
+
+model RecipeRating {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@unique([userId, recipeId])
+}
+
+model RecipeVersion {
+  id        String   @id @default(cuid())
+  recipeId  String
+  version   Int
+  data      Json
+  createdAt DateTime @default(now())
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@unique([recipeId, version])
 }
 
