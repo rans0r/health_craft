@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useVoiceCommands } from '@/hooks/use-voice-commands';
 import { useDeviceCapabilities } from '@/hooks/use-device-capabilities';
 import { useTranslations } from 'next-intl';
+import { trackEvent } from '@/lib/telemetry.client';
 
 interface CookingModeProps {
   steps: string[];
@@ -22,6 +23,7 @@ export function CookingMode({ steps }: CookingModeProps) {
   useVoiceCommands({ onNext: next, onPrevious: prev }, voiceEnabled);
 
   useEffect(() => {
+    trackEvent('cook_mode_start', { steps: steps.length });
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') next();
       if (e.key === 'ArrowLeft') prev();
