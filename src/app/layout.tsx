@@ -1,5 +1,6 @@
 import './globals.css';
 import type { ReactNode } from 'react';
+import Providers from './providers';
 
 export const metadata = {
   title: 'Health Craft',
@@ -9,7 +10,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-white">{children}</body>
+      <body className="min-h-screen bg-white">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
