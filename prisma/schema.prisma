@@ -10,9 +10,77 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Recipe {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  createdAt   DateTime @default(now())
+model User {
+  id         String             @id @default(cuid())
+  email      String             @unique
+  name       String?
+  image      String?
+  households HouseholdMember[]
+  settings   Json
+  createdAt  DateTime           @default(now())
+  recipes    Recipe[]
+  shoppingLists ShoppingList[]
 }
+
+model Household {
+  id        String            @id @default(cuid())
+  name      String
+  members   HouseholdMember[]
+  dietary   Json // {diets: ["keto"...], allergens: ["peanut"...], dislikes:[], caloriesTarget: number}
+  ownerId   String
+  owner     User              @relation(fields: [ownerId], references: [id])
+  mealPlans MealPlan[]
+}
+
+model HouseholdMember {
+  id          String    @id @default(cuid())
+  householdId String
+  userId      String?
+  profile     Json // age, height, prefs
+  household   Household @relation(fields: [householdId], references: [id])
+  user        User?     @relation(fields: [userId], references: [id])
+}
+
+model Recipe {
+  id           String   @id @default(cuid())
+  ownerId      String
+  owner        User     @relation(fields: [ownerId], references: [id])
+  title        String
+  description  String?
+  yield        String?
+  prepMinutes  Int?
+  cookMinutes  Int?
+  totalMinutes Int?
+  ingredients  Json     // [{name, qty, unit, notes, allergens:[]}]
+  steps        Json     // ordered strings or {step, time, image}
+  equipment    String[]
+  tags         String[]
+  nutrition    Json?    // calories, macros, micronutrients
+  images       String[]
+  source       Json?    // {type: url|image|nl, url, rawHtmlBlobId, attribution}
+  version      Int      @default(1)
+  embedding    Bytes?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model MealPlan {
+  id          String   @id @default(cuid())
+  householdId String
+  weekStart   DateTime // Monday 00:00
+  slots       Json     // {"2025-08-04": {dinner: {recipeId, servings}}}
+  notes       String?
+  household   Household @relation(fields: [householdId], references: [id])
+  shoppingList ShoppingList?
+}
+
+model ShoppingList {
+  id        String   @id @default(cuid())
+  planId    String?
+  ownerId   String
+  items     Json   // [{name, qty, unit, aisle, checked, fromRecipeId}]
+  createdAt DateTime @default(now())
+  plan      MealPlan? @relation(fields: [planId], references: [id])
+  owner     User      @relation(fields: [ownerId], references: [id])
+}
+
