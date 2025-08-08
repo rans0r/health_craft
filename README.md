@@ -4,7 +4,7 @@ AI-powered recipe book and meal planner Progressive Web App.
 
 ## Development
 
-This repository hosts a minimal Next.js 14 app configured with the App Router, TypeScript, and Tailwind CSS.
+This repository hosts a minimal Next.js 15 app configured with the App Router, TypeScript, and Tailwind CSS.
 
 ### Prerequisites
 
