@@ -16,6 +16,14 @@ const handler = NextAuth({
     }),
   ],
   session: { strategy: 'jwt' },
+  callbacks: {
+    session: async ({ session, token }) => {
+      if (session.user) {
+        session.user = { id: token.sub as string } as any;
+      }
+      return session;
+    },
+  },
 });
 
 export { handler as GET, handler as POST };

@@ -1,6 +1,7 @@
 import { openai } from '@/lib/openai';
 import { estimateNutrition } from '@/lib/nutrition';
 import { autoTagRecipe } from '@/lib/tags';
+import { isContentSafe } from '@/lib/contentSafety';
 
 export async function POST(req: Request) {
   const { prompt } = await req.json();
@@ -13,6 +14,11 @@ export async function POST(req: Request) {
     input: `Generate a recipe in JSON format with fields title, description, yield, ingredients (array), steps (array) based on the following description. Return only JSON.\n\n${prompt}`,
   });
   const text = (response as any).output_text || (response as any).choices?.[0]?.message?.content || '{}';
+
+  if (!(await isContentSafe(text))) {
+    return Response.json({ error: 'Unsafe content' }, { status: 400 });
+  }
+
   let recipe: any;
   try {
     recipe = JSON.parse(text);
