@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { MealPlan, MealSlot } from '@/lib/mealPlan';
+import type { MealPlan, MealSlot, ShoppingList } from '@/lib/mealPlan';
 import { MEAL_SLOTS, calculateShoppingList } from '@/lib/mealPlan';
 
 export default function MealPlanPage() {
   const [constraints, setConstraints] = useState('');
   const [plan, setPlan] = useState<MealPlan | null>(null);
-  const [shoppingList, setShoppingList] = useState<string[]>([]);
+  const [shoppingList, setShoppingList] = useState<ShoppingList>({});
   const [drag, setDrag] = useState<{ day: number; slot: MealSlot } | null>(null);
 
   const generate = async () => {
@@ -87,14 +87,22 @@ export default function MealPlanPage() {
             ))}
           </div>
 
-          <div className="mt-6">
-            <h2 className="text-xl font-bold">Shopping List</h2>
-            <ul className="list-disc pl-6">
-              {shoppingList.map((item) => (
-                <li key={item}>{item}</li>
+            <div className="mt-6">
+              <h2 className="text-xl font-bold">Shopping List</h2>
+              {Object.entries(shoppingList).map(([section, items]) => (
+                <div key={section} className="mt-2">
+                  <h3 className="font-semibold">{section}</h3>
+                  <ul className="list-disc pl-6">
+                    {items.map((item) => (
+                      <li key={item.name}>
+                        {item.quantity}
+                        {item.unit ? ` ${item.unit}` : ''} {item.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </ul>
-          </div>
+            </div>
         </>
       )}
     </main>
