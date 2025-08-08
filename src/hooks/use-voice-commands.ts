@@ -7,9 +7,15 @@ interface VoiceCommandHandlers {
   onPrevious?: () => void;
 }
 
-export function useVoiceCommands(handlers: VoiceCommandHandlers) {
+export function useVoiceCommands(
+  handlers: VoiceCommandHandlers,
+  enabled: boolean
+) {
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!enabled) return;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
     const recognition: SpeechRecognition = new SpeechRecognition();
@@ -21,10 +27,11 @@ export function useVoiceCommands(handlers: VoiceCommandHandlers) {
         .trim()
         .toLowerCase();
       if (transcript.includes('next')) handlers.onNext?.();
-      if (transcript.includes('previous') || transcript.includes('back')) handlers.onPrevious?.();
+      if (transcript.includes('previous') || transcript.includes('back'))
+        handlers.onPrevious?.();
     };
 
     recognition.start();
     return () => recognition.stop();
-  }, [handlers]);
+  }, [handlers, enabled]);
 }

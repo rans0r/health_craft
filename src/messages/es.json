@@ -1,0 +1,11 @@
+{
+  "cook": {
+    "title": "Modo de Cocina",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "enableVoice": "Activar voz",
+    "disableVoice": "Desactivar voz",
+    "voiceHint": "Comandos de voz activados: di 'siguiente' o 'anterior'.",
+    "unitExample": "Medición de ejemplo: {amount}"
+  }
+}

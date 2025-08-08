@@ -1,0 +1,11 @@
+{
+  "cook": {
+    "title": "Cooking Mode",
+    "previous": "Previous",
+    "next": "Next",
+    "enableVoice": "Enable voice",
+    "disableVoice": "Disable voice",
+    "voiceHint": "Voice commands enabled: say 'next' or 'previous'.",
+    "unitExample": "Sample measurement: {amount}"
+  }
+}
