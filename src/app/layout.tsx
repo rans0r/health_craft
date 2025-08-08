@@ -1,5 +1,6 @@
 import './globals.css';
 import type { ReactNode } from 'react';
+import type { NextWebVitalsMetric } from 'next/app';
 import Providers from './providers';
 
 export const metadata = {
@@ -21,4 +22,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </body>
     </html>
   );
+}
+
+export function reportWebVitals(metric: NextWebVitalsMetric) {
+  if (['CLS', 'FCP', 'LCP', 'INP'].includes(metric.name)) {
+    console.log(metric);
+  }
 }

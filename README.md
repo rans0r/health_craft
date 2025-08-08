@@ -2,6 +2,13 @@
 
 AI-powered recipe book and meal planner Progressive Web App.
 
+## Performance & Reliability
+
+- Uses Next.js Image optimization with remote patterns for responsive images.
+- Dynamic imports code-split client components to reduce bundle size.
+- Core Web Vitals are reported via `reportWebVitals`.
+- Background jobs support automatic retries via Inngest and QStash wrappers.
+
 ## Development
 
 This repository hosts a minimal Next.js 15 app configured with the App Router, TypeScript, and Tailwind CSS.
