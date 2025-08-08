@@ -1,10 +1,15 @@
 import { prisma } from '@/lib/prisma';
+import { autoTagRecipe } from '@/lib/tags';
+import { embedRecipe } from '@/lib/embedding';
 
 export async function POST(req: Request) {
   const { source, data, ownerId } = await req.json();
   if (!source || !data || !ownerId) {
     return Response.json({ error: 'Missing source, data, or ownerId' }, { status: 400 });
   }
+
+  const tags = data.tags && data.tags.length ? data.tags : autoTagRecipe(data);
+  const embedding = await embedRecipe({ ...data, tags });
 
   const recipe = await prisma.recipe.create({
     data: {
@@ -18,10 +23,11 @@ export async function POST(req: Request) {
       ingredients: data.ingredients,
       steps: data.steps,
       equipment: data.equipment || [],
-      tags: data.tags || [],
+      tags,
       nutrition: data.nutrition,
       images: data.images || [],
       source: { type: source, url: data.sourceUrl },
+      embedding: embedding ?? undefined,
     },
   });
 

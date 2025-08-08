@@ -2,6 +2,7 @@ import { scrape } from '@/lib/scrape';
 import { openai } from '@/lib/openai';
 import { uploadFile } from '@/lib/upload';
 import { estimateNutrition } from '@/lib/nutrition';
+import { autoTagRecipe } from '@/lib/tags';
 
 interface ParsedRecipe {
   title: string;
@@ -64,6 +65,7 @@ export async function POST(req: Request) {
   }
 
   recipe.nutrition = await estimateNutrition(recipe.ingredients);
+  recipe.tags = autoTagRecipe(recipe);
 
   return Response.json({ ok: true, parsed: recipe });
 }
