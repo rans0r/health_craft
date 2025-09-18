@@ -1,6 +1,6 @@
-import { defaultLocale, locales } from './src/i18n/config';
+import { defineRouting } from 'next-intl/routing';
 
-export default {
-  locales,
-  defaultLocale,
-};
+export default defineRouting({
+  locales: ['en', 'es'],
+  defaultLocale: 'en',
+});
