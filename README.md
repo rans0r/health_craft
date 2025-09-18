@@ -11,21 +11,22 @@ AI-powered recipe book and meal planner Progressive Web App.
 
 ## Development
 
-This repository hosts a minimal Next.js 15 app configured with the App Router, TypeScript, and Tailwind CSS.
+This repository hosts a minimal Next.js 15 app configured with the App Router, TypeScript, and Tailwind CSS. Dependencies are managed with Yarn 4 via Corepack.
 
 ### Prerequisites
 
 - Node.js 20+
+- Yarn 4 (managed via Corepack; run `corepack enable` if needed)
 
 ### Scripts
 
-- `npm run dev` – start the development server
-- `npm run build` – create a production build
-- `npm run start` – run the production build
-- `npm run lint` – run ESLint
-- `npm test` – run unit and contract tests
-- `npm run test:e2e` – run Playwright end-to-end tests
-- `npm run test:lhci` – run a Lighthouse audit
+- `yarn dev` – start the development server
+- `yarn build` – create a production build
+- `yarn start` – run the production build
+- `yarn lint` – run ESLint
+- `yarn test` – run unit and contract tests
+- `yarn test:e2e` – run Playwright end-to-end tests
+- `yarn test:lhci` – run a Lighthouse audit
 
 For the complete project specification and roadmap, see [docs/PROJECT_PROMPT.md](docs/PROJECT_PROMPT.md).
 For detailed local environment setup instructions, see [docs/local-development.md](docs/local-development.md).

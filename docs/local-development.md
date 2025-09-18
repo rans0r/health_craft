@@ -13,7 +13,7 @@ cd health_craft
 
 | Dependency | Recommended Version | Notes |
 | --- | --- | --- |
-| [Node.js](https://nodejs.org/en/download/package-manager) | 20.x (LTS) | Required for Next.js 15. The project assumes npm is available (bundled with Node). |
+| [Node.js](https://nodejs.org/en/download/package-manager) | 20.x (LTS) | Required for Next.js 15. Yarn is distributed with Node via [Corepack](https://nodejs.org/api/corepack.html). |
 | [PostgreSQL](https://www.postgresql.org/download/) | 14+ | Used by Prisma for the application data store. |
 | [Git](https://git-scm.com/downloads) | Latest | Needed for cloning the repository and contributing changes. |
 
@@ -22,8 +22,9 @@ cd health_craft
 ### Optional tooling
 
 - [Docker](https://www.docker.com/) for running PostgreSQL without installing it directly on your machine.
-- [pnpm](https://pnpm.io/) or [yarn](https://yarnpkg.com/) if you prefer an alternative package manager. (All examples below use npm.)
 - [VS Code](https://code.visualstudio.com/) with the Prisma, ESLint, and Tailwind extensions for a better DX.
+
+Run `corepack enable` once to activate Corepack if it is not already enabled globally.
 
 ## 3. Set up environment variables
 
@@ -65,27 +66,28 @@ DATABASE_URL="postgresql://healthcraft:healthcraft@localhost:5432/health_craft"
 ## 5. Install dependencies
 
 ```bash
-npm install
+corepack use yarn@4.9.4
+yarn install
 ```
 
-This installs Next.js, Prisma, Tailwind CSS, Playwright, and all other runtime and development dependencies defined in `package.json`.
+`corepack use yarn@4.9.4` ensures the repo-local Yarn version defined in `package.json` is active, then `yarn install` downloads Next.js, Prisma, Tailwind CSS, Playwright, and all other runtime and development dependencies defined in `package.json`.
 
 ## 6. Prepare the database schema
 
 Use Prisma to sync the schema to your local database:
 
 ```bash
-npx prisma db push
+yarn prisma db push
 ```
 
-This command introspects `prisma/schema.prisma` and applies the models to your development database. If you need to inspect or edit data, Prisma Studio is available via `npx prisma studio`.
+This command introspects `prisma/schema.prisma` and applies the models to your development database. If you need to inspect or edit data, Prisma Studio is available via `yarn prisma studio`.
 
 ## 7. Run the application
 
 Start the Next.js development server:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 The app is served at [http://localhost:3000](http://localhost:3000). Hot reloading is enabled out of the box.
@@ -95,19 +97,19 @@ The app is served at [http://localhost:3000](http://localhost:3000). Hot reloadi
 Before opening a pull request, run the automated test suites to ensure everything passes locally:
 
 ```bash
-npm run lint        # ESLint
-npm test            # Unit + contract tests
-npm run test:e2e    # Playwright end-to-end tests
-npm run test:lhci   # Lighthouse smoke test
+yarn lint        # ESLint
+yarn test        # Unit + contract tests
+yarn test:e2e    # Playwright end-to-end tests
+yarn test:lhci   # Lighthouse smoke test
 ```
 
-> The `npm run test:e2e` and `npm run test:lhci` commands require a running development server. Start it in a separate terminal via `npm run dev` before executing these commands.
+> The `yarn test:e2e` and `yarn test:lhci` commands require a running development server. Start it in a separate terminal via `yarn dev` before executing these commands.
 
 ## 9. Troubleshooting tips
 
-- **Port already in use (3000):** Stop the process occupying the port or run `npm run dev -- --port 3001`.
+- **Port already in use (3000):** Stop the process occupying the port or run `yarn dev --port 3001`.
 - **Database connection errors:** Confirm the PostgreSQL container (or service) is running and that your `.env.local` `DATABASE_URL` matches its credentials.
-- **Prisma client out of date:** Run `npx prisma generate` after updating the schema.
-- **Playwright missing browsers:** Execute `npx playwright install --with-deps` to install browser binaries.
+- **Prisma client out of date:** Run `yarn prisma generate` after updating the schema.
+- **Playwright missing browsers:** Execute `yarn playwright install --with-deps` to install browser binaries.
 
 With these steps you should have a fully functioning local development environment for Health Craft.

@@ -27,7 +27,7 @@ This project uses a multi-layered testing approach derived from the project prom
 ## Lighthouse CI
 - **Tool**: `@lhci/cli`
 - **Goal**: enforce PWA performance budgets (LCP < 2.5s, CLS < 0.1, INP < 200ms) on each PR.
-- **Usage**: `npm run test:lhci` runs a single-page audit against Example.com; CI will supply the deployed URL.
+- **Usage**: `yarn test:lhci` runs a single-page audit against Example.com; CI will supply the deployed URL.
 
 ## Directory Layout
 ```
