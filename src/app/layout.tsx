@@ -4,19 +4,7 @@ import type { NextWebVitalsMetric } from 'next/app';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, setRequestLocale } from 'next-intl/server';
 import Providers from './providers';
-import { defaultLocale, locales, type Locale } from '@/i18n/config';
-
-async function loadMessages(locale: Locale) {
-  const messages = await import(`@/messages/${locale}.json`);
-  return messages.default;
-}
-
-function resolveLocale(locale?: string | null): Locale {
-  if (locale && locales.includes(locale as Locale)) {
-    return locale as Locale;
-  }
-  return defaultLocale;
-}
+import { resolveLocale, loadMessages } from '@/i18n/server-utils';
 
 export const metadata = {
   title: 'Health Craft',
