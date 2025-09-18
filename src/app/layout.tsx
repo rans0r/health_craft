@@ -1,9 +1,23 @@
 import './globals.css';
 import type { ReactNode } from 'react';
 import type { NextWebVitalsMetric } from 'next/app';
-import Providers from './providers';
+import { headers } from 'next/headers';
 import { NextIntlClientProvider } from 'next-intl';
-import en from '@/messages/en.json';
+import { setRequestLocale } from 'next-intl/server';
+import Providers from './providers';
+import { defaultLocale, locales, type Locale } from '@/i18n/config';
+
+async function loadMessages(locale: Locale) {
+  const messages = await import(`@/messages/${locale}.json`);
+  return messages.default;
+}
+
+function resolveLocale(locale?: string | null): Locale {
+  if (locale && locales.includes(locale as Locale)) {
+    return locale as Locale;
+  }
+  return defaultLocale;
+}
 
 export const metadata = {
   title: 'Health Craft',
@@ -12,9 +26,12 @@ export const metadata = {
   themeColor: '#1e90ff',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  const locale = 'en';
-  const messages = en;
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const headersList = await headers();
+  const requestedLocale = headersList.get('X-NEXT-INTL-LOCALE');
+  const locale = resolveLocale(requestedLocale);
+  setRequestLocale(locale);
+  const messages = await loadMessages(locale);
   return (
     <html lang={locale}>
       <head>
