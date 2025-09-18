@@ -13,7 +13,9 @@ const intlMiddleware = createMiddleware({
 });
 
 export function middleware(req: NextRequest) {
-  if (req.nextUrl.pathname.startsWith('/api/')) {
+  const { pathname } = req.nextUrl;
+
+  if (pathname.startsWith('/api')) {
     const ip = req.ip ?? '127.0.0.1';
     const now = Date.now();
     const record = ipMap.get(ip) || { count: 0, start: now };
@@ -29,9 +31,17 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/_vercel') ||
+    /\.[^/]+$/.test(pathname)
+  ) {
+    return NextResponse.next();
+  }
+
   return intlMiddleware(req);
 }
 
 export const config = {
-  matcher: ['/(?!api|_next|_vercel|.*\\..*).*', '/api/:path*'],
+  matcher: ['/:path*'],
 };
