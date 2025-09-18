@@ -2,7 +2,7 @@ import './globals.css';
 import type { ReactNode } from 'react';
 import type { NextWebVitalsMetric } from 'next/app';
 import { NextIntlClientProvider } from 'next-intl';
-import { getRequestLocale, setRequestLocale } from 'next-intl/server';
+import { getLocale, setRequestLocale } from 'next-intl/server';
 import Providers from './providers';
 import { defaultLocale, locales, type Locale } from '@/i18n/config';
 
@@ -26,7 +26,7 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const requestedLocale = await getRequestLocale();
+  const requestedLocale = await getLocale();
   const locale = resolveLocale(requestedLocale);
   setRequestLocale(locale);
   const messages = await loadMessages(locale);
