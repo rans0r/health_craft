@@ -28,4 +28,5 @@ This repository hosts a minimal Next.js 15 app configured with the App Router, T
 - `npm run test:lhci` – run a Lighthouse audit
 
 For the complete project specification and roadmap, see [docs/PROJECT_PROMPT.md](docs/PROJECT_PROMPT.md).
+For detailed local environment setup instructions, see [docs/local-development.md](docs/local-development.md).
 For details on the testing approach, see [docs/testing-strategy.md](docs/testing-strategy.md).
