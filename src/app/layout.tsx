@@ -1,9 +1,8 @@
 import './globals.css';
 import type { ReactNode } from 'react';
 import type { NextWebVitalsMetric } from 'next/app';
-import { headers } from 'next/headers';
 import { NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getRequestLocale, setRequestLocale } from 'next-intl/server';
 import Providers from './providers';
 import { defaultLocale, locales, type Locale } from '@/i18n/config';
 
@@ -27,8 +26,7 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const headersList = await headers();
-  const requestedLocale = headersList.get('X-NEXT-INTL-LOCALE');
+  const requestedLocale = await getRequestLocale();
   const locale = resolveLocale(requestedLocale);
   setRequestLocale(locale);
   const messages = await loadMessages(locale);
