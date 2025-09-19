@@ -1,20 +1,12 @@
-import { headers } from 'next/headers';
 import { NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getLocale, setRequestLocale } from 'next-intl/server';
 
 import Providers from './providers';
 import { resolveLocale, loadMessages } from '@/i18n/server-utils';
-import type { Locale } from '@/i18n/config';
-
-async function getLocaleFromHeaders(): Promise<Locale> {
-  const headerList = await headers();
-  const requestedLocale = headerList.get('X-NEXT-INTL-LOCALE');
-
-  return resolveLocale(requestedLocale);
-}
 
 export default async function NotFoundPage() {
-  const locale = await getLocaleFromHeaders();
+  const requestedLocale = await getLocale();
+  const locale = resolveLocale(requestedLocale);
   setRequestLocale(locale);
   const messages = await loadMessages(locale);
 
